@@ -6,3 +6,6 @@ X_points = 15
 
 # number of points to sample from colored image in the Y direction
 Y_points = 15
+
+# the weighting of difference in luminance vs. difference in neighborhood stddev.
+dist_weights = [0.5, 0.5]
