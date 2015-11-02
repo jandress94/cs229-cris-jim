@@ -6,7 +6,6 @@ from skimage import io, color
 # Given the filename of a colored image, returns an array of sampled points, each containing the [l, a, b, sigma] values
 def sampleImage(colored_filename):
 	img_rgb = io.imread(colored_filename)
-	img_gray = color.rgb2gray(img_rgb)*255
 	img_lab = color.rgb2lab(img_rgb)
 	# integer division
 	delta_x = len(img_rgb)/(X_points + 1)
@@ -16,11 +15,11 @@ def sampleImage(colored_filename):
 		for j in xrange(Y_points):
 			x = (i+1)*delta_x
 			y = (j+1)*delta_y
-			sigma = computeStdDevLuminance(img_gray, x, y)
+			sigma = computeStdDevLuminance(img_lab[:, :, 0], x, y)
 			grid[i][j] = np.append(img_lab[x][y], sigma)
 	# reshape the grid into a 1D array
 	return np.reshape(grid, (-1, 4))
 
-#grid = sampleImage('./Images/Landscape/mountain_color.jpg')
+grid = sampleImage('./Images/Landscape/mountain_color.jpg')
 #print grid
 
