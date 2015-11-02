@@ -12,7 +12,7 @@ def getClosestTraining(pixel, trainData):
 
 # read in the test image and convert it to grayscale
 img_rgb = io.imread('./Images/Landscape/mountain_gray.png')
-img_input_lab = color.rgb2lab(img_rgb)
+img_input_lab = color.rgb2lab(img_rgb)[:, :, 0]
 
 # read in the model
 trainData = sampleImage('./Images/Landscape/mountain_color.jpg')
@@ -26,24 +26,20 @@ y_max = img_input_lab.shape[1] - n - 1
 # classify
 output = np.zeros(img_rgb.shape)
 count = 0
-for x, y in np.ndindex(img_input_lab.shape):
+for (x, y), lum in np.ndenumerate(img_input_lab):
 
 	if x < x_min or x > x_max or y < y_min or y > y_max :
 		continue
 
 	count += 1
 	if count%100 == 0:
-		print count
+		print count, (x_max - x_min + 1)*(y_max - y_min + 1)
 
-	lum = inm_input_lab[x,y,0]
 	output[x,y,0] = lum
-	stddev = computeStdDevLuminance(img_input_lab[:, :, 0], x, y)
+	stddev = computeStdDevLuminance(img_input_lab, x, y)
 	
 	closestIndex = getClosestTraining([lum, stddev], trainData[:,[0,3]])
 	output[x, y, 1:3] = trainData[closestIndex, 1:3]
-	#if x%100 == 0 and x == y:
-	#	print trainData[closestIndex, 1:2]
-	#	print output[x,y], trainData[closestIndex]
 
 output = output[x_min : x_max + 1, y_min : y_max + 1]
 
