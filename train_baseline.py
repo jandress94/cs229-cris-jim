@@ -21,6 +21,6 @@ def sampleImage(colored_filename):
 	# reshape the grid into a 1D array
 	return np.reshape(grid, (-1, 4))
 
-grid = sampleImage('./Images/Landscape/mountain_color.jpg')
-print grid
+#grid = sampleImage('./Images/Landscape/mountain_color.jpg')
+#print grid
 
