@@ -9,3 +9,12 @@ Y_points = 7
 
 # the weighting of difference in luminance vs. difference in neighborhood stddev.
 dist_weights = [0.5, 0.5]
+
+# the file where the training image is stored
+train_img_filename = './Images/Landscape/mountain_color.jpg'
+
+# the file where the test image is stored
+test_img_filename = './Images/Landscape/mountain_gray.png'
+
+# the file where the colored test image will be stored
+test_img_colored_filename = './Images/Landscape/mountain_gray_colored_lumMap.png'

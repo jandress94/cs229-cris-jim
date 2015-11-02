@@ -13,13 +13,16 @@ def computeStdDevLuminance(image, x, y):
 	y_min = y - n
 	y_max = y + n + 1
 	square = image[x_min : x_max, y_min : y_max]
+	return np.std(square)
+	
+	'''
 	avg = np.mean(square)
 	sum_of_squares = 0
 	for i in xrange(sampling_side):
 		for j in xrange(sampling_side):
 			sum_of_squares += (avg - square[i][j])*(avg - square[i][j])
 	sigma = (1.0 * math.sqrt(sum_of_squares)) / sampling_side
-	return sigma
+	return sigma '''
 
 # some testing
 #img_rgb = io.imread('./Images/Landscape/mountain_color.jpg')
