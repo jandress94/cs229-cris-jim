@@ -3,6 +3,13 @@ import numpy as np
 from sklearn.cluster import MeanShift, estimate_bandwidth
 from skimage import io, color
 
+def luminanceMapping(train_lum, test_lum):
+	mean_tr = np.mean(train_lum)
+	mean_te = np.mean(test_lum)
+	std_tr = np.std(train_lum)
+	std_te = np.std(test_lum)
+	return std_te * (train_lum - mean_tr) / std_tr + mean_te
+
 # Find the neighbors of a pixel (x, y) (i.e. find the square of size kxk centered at (x, y))
 # Assume the square is within bounds!
 def find_neighbors(image, x, y):
@@ -14,21 +21,19 @@ def find_neighbors(image, x, y):
 	neighbors = image[x_min : x_max, y_min : y_max]
 	return neighbors
 
+def find_same_label_neighbors(img, img_labels, label, x, y):
+	n = (sampling_side-1)/2
+	x_min = x - n
+	x_max = x + n + 1
+	y_min = y - n
+	y_max = y + n + 1
+
 # Given the matrix representation of a grayscale image and the (x, y) coordinates of a point on that image, compute the
 # standard deviation of luminosity in a kxk square centered at (x, y)
 # Assume the square is within bounds!
 def computeStdDevLuminance(image, x, y):
 	square = find_neighbors(image, x, y)
 	return np.std(square)
-	
-	'''
-	avg = np.mean(square)
-	sum_of_squares = 0
-	for i in xrange(sampling_side):
-		for j in xrange(sampling_side):
-			sum_of_squares += (avg - square[i][j])*(avg - square[i][j])
-	sigma = (1.0 * math.sqrt(sum_of_squares)) / sampling_side
-	return sigma '''
 
 def segmentImage(image_lab):
 	image = np.array(image_lab)

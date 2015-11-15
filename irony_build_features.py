@@ -11,7 +11,7 @@ def dctFromPixel(luminance_image, x, y):
 	# get the square of size sampling_side centered at (x, y)
 	neighbors = find_neighbors(luminance_image, x, y)
 	# compute the DCT for the square and reshape it into a 1D array
-	discrete_cosine_transform = dct(neighbors)
+	discrete_cosine_transform = dct(dct(neighbors.T, norm='ortho').T, norm='ortho')
 	feature = np.reshape(discrete_cosine_transform, -1).tolist()
 	return feature
 
@@ -45,7 +45,7 @@ def buildFeatureSpace(image_lab):
 	plt.savefig('./Images/Landscape/1.png')
 	np_image_lab = np.array(image_lab)
 	# Keep only the luminance from the Lab triple
-	luminance_img = np_image_lab[:, :, 1]
+	luminance_img = np_image_lab[:, :, 0]
 
 	# integer division
 	delta_x = len(luminance_img)/(X_points + 1)

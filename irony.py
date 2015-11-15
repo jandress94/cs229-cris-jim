@@ -9,13 +9,6 @@ from irony_knn import *
 from irony_feature_select import *
 import matplotlib.pyplot as plt
 
-def luminanceMapping(train_lum, test_lum):
-	mean_tr = np.mean(train_lum)
-	mean_te = np.mean(test_lum)
-	std_tr = np.std(train_lum)
-	std_te = np.std(test_lum)
-	return std_te * (train_lum - mean_tr) / std_tr + mean_te
-
 # load the training image
 train_img_lab = color.rgb2lab(io.imread(train_img_filename))
 
@@ -39,9 +32,15 @@ test_img_dct = dctFromImage(test_img_lum)
 shape = np.shape(test_img_dct)
 test_pixels = feature_trans( np.reshape(test_img_dct, (shape[0]*shape[1], -1) ) )
 
-feat_spc_labels, nearest_train = knnGetClosest(test_pixels, train_vals, labels[:, 0])
-
+print('Computing the closest training example to each pixel')
+feat_spc_labels, smallest_dists = knnGetClosest(test_pixels, train_vals, labels[:, 0])
 feat_spc_labels = np.reshape(feat_spc_labels, (shape[0], shape[1]))
+smallest_dists = np.reshape(smallest_dists, (shape[0], shape[1]))
+
+# run a vote for the correct label in image space
+print('Computing the weight for each test pixel')
+weights = compute_weights(smallest_dists)
+dom_labels, confidences = image_vote(feat_spc_labels, weights)
 
 plt.figure(2)
 plt.imshow(feat_spc_labels)
@@ -49,8 +48,9 @@ plt.axis('off')
 
 plt.savefig('./Images/Landscape/2.png')
 
+plt.figure(3)
+plt.imshow(dom_labels)
+plt.axis('off')
 
-#a = np.random.rand(3,3,2)
-#b = np.reshape(a, (-1,2))
-#c = np.reshape(b, np.shape(a))
+plt.savefig('./Images/Landscape/3.png')
 
