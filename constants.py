@@ -17,4 +17,4 @@ train_img_filename = './Images/Landscape/mountain_color.jpg'
 test_img_filename = './Images/Landscape/mountain_gray.png'
 
 # the file where the colored test image will be stored
-test_img_colored_filename = './Images/Landscape/mountain_gray_colored_lumMap.png'
+test_img_colored_filename = './Images/Landscape/mountain_gray_colored_10.png'
