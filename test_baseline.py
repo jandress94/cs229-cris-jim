@@ -19,7 +19,7 @@ def colorizeTest(test_img_lum, trainData):
 	# classify
 	output = np.zeros(test_img_lum.shape + (3,))
 	count = 0
-	total_pixels = (x_max - x_min + 1)*(y_max - y_min + 1)
+	total_pixels = (x_max - x_min + 1)*(y_max - y_min + 1) / 100.0
 	for (x, y), lum in np.ndenumerate(test_img_lum):
 
 		# make sure we don't look at pixels without enough neighbors

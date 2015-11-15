@@ -51,8 +51,8 @@ def buildFeatureSpace(image_lab):
 			# get the label and the colors for the pixel at (x, y). substitute the luminance with the label in the lab triple
 			pixel_lab = image_lab[x][y]
 			pixel_lab[0] = segmented_image[x][y]
-			label_and_colors.append(pixel_lab.tolist())
-	return features, label_and_colors
+			label_and_colors.append(pixel_lab)
+	return np.array(features), np.array(label_and_colors)
 
 '''
 img_rgb = io.imread('./Images/Landscape/mountain_color.jpg')
