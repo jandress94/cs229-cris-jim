@@ -7,12 +7,23 @@ from skimage import io, color
 from irony_build_features import *
 from irony_knn import *
 from irony_feature_select import *
+import matplotlib.pyplot as plt
+
+def luminanceMapping(train_lum, test_lum):
+	mean_tr = np.mean(train_lum)
+	mean_te = np.mean(test_lum)
+	std_tr = np.std(train_lum)
+	std_te = np.std(test_lum)
+	return std_te * (train_lum - mean_tr) / std_tr + mean_te
 
 # load the training image
 train_img_lab = color.rgb2lab(io.imread(train_img_filename))
 
 # load the test image and convert it to just luminance
 test_img_lum = color.rgb2lab(io.imread(test_img_filename))[:, :, 0]
+
+# perform the luminance mapping
+train_img_lab[:, :, 0] = luminanceMapping(train_img_lab[:, :, 0], test_img_lum)
 
 print('Computing the DCT coefficients of training image')
 dct_vals, labels = buildFeatureSpace(train_img_lab)
@@ -36,7 +47,7 @@ plt.figure(2)
 plt.imshow(feat_spc_labels)
 plt.axis('off')
 
-plt.show()
+plt.savefig('./Images/Landscape/2.png')
 
 
 #a = np.random.rand(3,3,2)

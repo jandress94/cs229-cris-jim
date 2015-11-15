@@ -3,6 +3,8 @@ from util import *
 import numpy as np
 from scipy.fftpack import dct
 from skimage import io, color
+import matplotlib.pyplot as plt
+from collections import Counter
 
 # Given an image with only the luminance values, compute the Discrete Cosine Transform (DCT) of the square centered at (x, y)
 def dctFromPixel(luminance_image, x, y):
@@ -33,6 +35,14 @@ def dctFromImage(luminance_image):
 # features and the Nx3 list of triples (label, a_channel, b_channel). N is the number of sampled pixels.
 def buildFeatureSpace(image_lab):
 	segmented_image = segmentImage(image_lab)
+	c = Counter(np.reshape(np.array(segmented_image), -1))
+	print c.most_common()
+
+	plt.figure(1)
+	plt.imshow(segmented_image)
+	plt.axis('off')
+
+	plt.savefig('./Images/Landscape/1.png')
 	np_image_lab = np.array(image_lab)
 	# Keep only the luminance from the Lab triple
 	luminance_img = np_image_lab[:, :, 1]

@@ -11,6 +11,8 @@ def knnGetClosest(test_pixels, train_vals, labels):
 	nearest_train = []
 
 	for i in range(0, np.shape(test_pixels)[0]):
+	        if i%1000 == 0:
+	            print i
 		pred_label = classifier.predict(test_pixels[i, :])
 		dists, neighbs = classifier.kneighbors(test_pixels[i, :])
 
