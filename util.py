@@ -12,8 +12,8 @@ def luminanceMapping(train_lum, test_lum):
 
 # Find the neighbors of a pixel (x, y) (i.e. find the square of size kxk centered at (x, y))
 # Assume the square is within bounds!
-def find_neighbors(image, x, y):
-	n = (sampling_side-1)/2
+def find_neighbors(image, x, y, size = sampling_side):
+	n = (size-1)/2
 	x_min = x - n
 	x_max = x + n + 1
 	y_min = y - n
