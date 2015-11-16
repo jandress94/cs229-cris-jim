@@ -1,0 +1,8 @@
+\section{Results}
+\label{sec:results}
+
+The results of our baseline implementation are presented in Fig. \ref{fig:baseline_result}. Even though we managed to transfer the color to most of the vegetation and the sky, the upper right corner of the sky and some parts of the mountain are miscolored. This defect and the long overall execution time motivated us to search for other methods. 
+
+For the second approach, we use $7\times7$ square to extract information about the neighborhood of each pixel. This results in a 49-dimensional feature space, which later gets reduced using PCA to 20, and then 10 dimensions. We use a grid that samples roughly $4\%$ of the colored picture. 
+
+Figure \ref{fig:elephants} shows the application of the algorithm described in section \ref{sec:dct}. Note that even though many of the points inside the elephant's body were attributed the wrong label (c), our voting procedure relabels those points to achieve a consistent texture (d). Figure (e) shows that we are most confident in the labels attributed to the sky. This makes perfect sense, since the majority of the training image was the blue sky and hence it will make up most of the colorized image. Figure \ref{fig:algo_compare} demonstrates the improvement of our second approach over the naive baseline. 

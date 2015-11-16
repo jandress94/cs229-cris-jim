@@ -11,29 +11,29 @@ Y_points = 100
 dist_weights = [0.5, 0.5]
 
 # the number of intra-differences to sample
-num_intra = 100
+num_intra = 500
 
 # the number of inter-differences to sample
-num_inter = 100
+num_inter = 500
 
 # the number of dimension in the final feature space
 dim = 10
 
 # the number of dimensions in the feature space that has no intra-differences
-dim2 = 20
+dim2 = 40
 
 # the number of neighbors to use in the knn classifier
 n_neighbors = 7
 
-conf_cutoff = 0.75
+conf_cutoff = 0.0
 
 # the file where the training image is stored
-train_img_filename = './Images/Landscape/mountain_color.jpg'
-#train_img_filename = './Images/Elephant/elephant1.jpg'
+#train_img_filename = './Images/Landscape/mountain_color.jpg'
+train_img_filename = './Images/Elephant/elephant1.jpg'
 
 # the file where the test image is stored
-test_img_filename = './Images/Landscape/mountain_gray.png'
-#test_img_filename = './Images/Elephant/elephant2.jpg'
+#test_img_filename = './Images/Landscape/mountain_gray.png'
+test_img_filename = './Images/Elephant/elephant2.jpg'
 
 # the file where the colored test image will be stored
 test_img_colored_filename = './Images/Landscape/mountain_gray_colored_10.png'

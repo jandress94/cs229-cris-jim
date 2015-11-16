@@ -1,2 +1,7 @@
 \section{Introduction}
 \label{sec:intro}
+
+Image colorization is the process of adding colors to a grayscale picture using as a source a colored image with similar content. Colorization techniques are widely used is astronomy, MRI scans, and  black-and-white image restoration. Given a grayscale image, there is no unique correct colorization in the absence of any information from the user. Even though many implementations require the user to specify initial colors in certain regions of the picture, our project focuses on automatic image colorization, without any additional input from the user. 
+In this report we describe our first attempts at colorizing a gray image using a similar colored picture. We begin by implementing a simplistic method that transfers colors between pixels based on the similarity in their luminosity. We improve our approach by considering a larger feature space, that takes into account the provenance of each pixel and strives for spatial consistency. Then we apply PCA and KNN in the feature space, followed by a confidence voting that labels our gray pixels and determines from which colored pixels we have to transfer the chromatic channels.
+
+

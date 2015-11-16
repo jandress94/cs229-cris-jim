@@ -54,19 +54,19 @@ output_lab[:, :, 1:] = colors
 plt.figure(2)
 plt.imshow(feat_spc_labels)
 plt.axis('off')
-plt.savefig('./Images/Elephant/2.png')
+plt.savefig('./Images/Landscape/2.png')
 
 plt.figure(3)
 plt.imshow(dom_labels)
 plt.axis('off')
-plt.savefig('./Images/Elephant/3.png')
+plt.savefig('./Images/Landscape/3.png')
 
 plt.figure(4)
 plt.imshow(confidences)
 plt.axis('off')
-plt.savefig('./Images/Elephant/4.png')
+plt.savefig('./Images/Landscape/4.png')
 
 plt.figure(5)
 plt.imshow(color.lab2rgb(output_lab))
 plt.axis('off')
-plt.savefig('./Images/Elephant/5.png')
+plt.savefig('./Images/Landscape/5.png')

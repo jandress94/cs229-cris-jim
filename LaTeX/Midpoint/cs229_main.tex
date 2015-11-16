@@ -1,7 +1,7 @@
 \documentclass[12pt]{article}
 \usepackage{setspace}
 \usepackage[margin=1.0in]{geometry}
-\usepackage{amsmath}
+\usepackage{amsmath, amssymb, amsthm}
 \usepackage{bbm}
 \usepackage{graphicx}
 \usepackage{float}
@@ -9,15 +9,35 @@
 \usepackage{caption}
 \usepackage[labelformat=empty]{subcaption}
 \usepackage{titling}
+\usepackage{xcolor}
+\usepackage{titling}
+
+\newcommand{\real}{\mathbb{R}}
+
+\setlength{\droptitle}{-1in}
 
 %opening
-\title{}
+\title{From Grayscale to \textcolor{red}{C}\textcolor{orange}{o}\textcolor{yellow}{l}\textcolor{green}{o}\textcolor{blue}{r}\textcolor{purple}{:}\\Digital Image Colorization using Machine Learning}
 \author{Cris Zanoci and Jim Andress}
+\date{November 15, 2015}
 
 \begin{document}
 
 \maketitle
 
 \input{intro.tex}
+
+\input{methods.tex}
+
+\input{results.tex}
+
+\input{future_work.tex}
+
+\input{appendix.tex}
+
+\newpage
+
+\bibliographystyle{ieeetr}
+\bibliography{references}
 
 \end{document}

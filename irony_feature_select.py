@@ -26,27 +26,44 @@ def pca(dataMat, num_feat = 3, keep_large = True):
 
 	return trans_to_space
 
-def get_diffs(dataMat, labels, intra = True):
-	num_ex = np.shape(dataMat)[0];
+
+def get_diffs(dataMat, label_dict, intra = True):
+	num_labels = len(label_dict);
 	num_diffs = num_intra if intra else num_inter
 	diffs = np.zeros((num_diffs, np.shape(dataMat)[1]))
 	for i in range(0, num_diffs):
-		j = randint(0, num_ex - 1)
-		while True:
-			k = randint(0, num_ex - 1)
-			if (labels[j] == labels[k]) == intra:
-				break
+		label1 = randint(0, num_labels - 1)
+		label2 = label1
+		if not intra:
+			while True:
+				label2 = randint(0, num_labels - 1)
+				if label1 != label2:
+					break
+
+		j = randint(0, len(label_dict[label1]) - 1)
+		k = randint(0, len(label_dict[label2]) - 1)
 
 		diff = dataMat[j, :] - dataMat[k, :]
 		diffs[i, :] = diff
 	return diffs
 
+def build_label_dict(labels):
+	label_dict = {}
+	for i in range(0, len(labels)):
+		if labels[i] in label_dict:
+			label_dict[labels[i]].append(i)
+		else:
+			label_dict[labels[i]] = [i]
+	return label_dict
+
 def feature_select(dct_values, labels):
-	intra_diffs = get_diffs(dct_values, labels, True)
+	label_dict = build_label_dict(labels)
+
+	intra_diffs = get_diffs(dct_values, label_dict, True)
 
 	intra_diff_transform = pca(intra_diffs, dim2, False)
 
-	inter_diffs = get_diffs(intra_diff_transform(dct_values), labels, False)
+	inter_diffs = get_diffs(intra_diff_transform(dct_values), label_dict, False)
 
 	inter_diff_transform = pca(inter_diffs, dim, True)
 
