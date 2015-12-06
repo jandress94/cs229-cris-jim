@@ -2,6 +2,8 @@ from constants import *
 import numpy as np
 from sklearn.cluster import MeanShift, estimate_bandwidth
 from skimage import io, color
+from scipy.cluster.vq import kmeans,vq
+
 
 def luminanceMapping(train_lum, test_lum):
 	mean_tr = np.mean(train_lum)
@@ -14,10 +16,11 @@ def luminanceMapping(train_lum, test_lum):
 # Assume the square is within bounds!
 def find_neighbors(image, x, y, size = sampling_side):
 	n = (size-1)/2
-	x_min = x - n
-	x_max = x + n + 1
-	y_min = y - n
-	y_max = y + n + 1
+	W, L = (image.shape)[0:2]
+	x_min = max(x - n, 0)
+	x_max = min(x + n + 1, W)
+	y_min = max(y - n, 0)
+	y_max = min(y + n + 1, L)
 	neighbors = image[x_min : x_max, y_min : y_max]
 	return neighbors
 
@@ -31,9 +34,11 @@ def find_same_label_neighbors(img, img_labels, label, x, y):
 # Given the matrix representation of a grayscale image and the (x, y) coordinates of a point on that image, compute the
 # standard deviation of luminosity in a kxk square centered at (x, y)
 # Assume the square is within bounds!
-def computeStdDevLuminance(image, x, y):
+# to compute laplacian, see this:
+# http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_imgproc/py_gradients/py_gradients.html
+def computeStdDevAndMean(image, x, y):
 	square = find_neighbors(image, x, y)
-	return np.std(square)
+	return np.std(square), np.mean(square)
 
 def segmentImage(image_lab):
 	image = np.array(image_lab)
@@ -63,3 +68,13 @@ def segmentImage(image_lab):
 #print img_gray[12:15, 12:15]
 #print computeStdDevLuminance(img_gray, 13, 13)
 
+# Compute the centroids and the corresponding clusters for image_ab
+def colorKmeans(image_ab, k):
+	list_of_pixels = np.reshape(image_ab, [-1, 2])
+	# shape of centroids = (k, 2)
+	centroids, _ = kmeans(list_of_pixels, k)
+	clusters, _ = vq(list_of_pixels, centroids)
+	# clusters looks exactly like image_ab, but instead of [a, b] values it stores the index of the corresponding centroid,
+	# that can be retrieved from centroids
+	clusters = np.reshape(clusters, (image_ab[:, :, 0]).shape)
+	return centroids, clusters
