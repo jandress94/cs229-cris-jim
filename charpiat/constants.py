@@ -20,7 +20,7 @@ test_img_filename = '../Images/Landscape/mountain_gray.png'
 test_img_colored_filename = './Images/Landscape/mountain_gray_colored_10.png'
 
 # whether to recompute or used saved files
-recomputeData = True
+recomputeData = False
 
 # Number of centroids for clustering the colored image
 num_centroids = 32
@@ -42,4 +42,4 @@ sigma1 = 1.0
 sigma2 = 1.5
 
 # Coefficient of first term in energy minimization problem
-alpha = 100
+alpha = 16

@@ -1,17 +1,18 @@
 import numpy as np
 from image import *
-from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 from constants import *
+from datetime import datetime
 
 def train_svm(image, pixel_labels):
 	# initialize array to store svm objects
 	svm_array = []
 	# train the SVMs
 	for i in range(num_centroids):
-		print "SVM ", i
+		print "SVM", i, str(datetime.now())
 		# make all the labels that were i equal to one, while all the over labels equal zero
 		labels = (pixel_labels == i).astype(np.int32)
-		svm = SVC(C=C, gamma=gamma)
+		svm = LinearSVC(dual=False, class_weight='auto')
 		svm.fit(image.features, labels)
 		svm_array.append(svm)
 	

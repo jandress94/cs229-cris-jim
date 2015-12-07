@@ -35,9 +35,6 @@ if (recomputeData):
 	np.save('./saved_data/train_features', train.features)
 	np.save('./saved_data/pixel_labels', pixel_labels)
 	np.save('./saved_data/centroids', train.centroids)
-
-	print 'Training SVMs...'
-	#svm_array = train_svm(train, pixel_labels)
 else:
 	train.features = np.load('./saved_data/train_features.npy')
 	pixel_labels = np.load('./saved_data/pixel_labels.npy')
@@ -49,12 +46,16 @@ if (recomputeData):
 	print 'Computing the high dimensional test data...'
 	test.features = testImageFeatures(test, pca, min_max_scaler)
 	np.save('./saved_data/test_features', test.features)
+else:
+	test.features = np.load('./saved_data/test_features.npy')
 
+if (recomputeData):
+	print 'Training SVMs...'
+	svm_array = train_svm(train, pixel_labels)
 	print 'Testing using the SVMs...'
 	unary_cost = test_svm(test, svm_array)
 	np.save('./saved_data/unary_cost', unary_cost)
 else:
-	test.features = np.load('./saved_data/test_features.npy')
 	unary_cost = np.load('./saved_data/unary_cost.npy')
 
 n = (max(surf_window, sampling_side)-1)/2
@@ -63,12 +64,13 @@ X, Y = output_img_l.shape
 X, Y = int(X), int(Y)
 
 print 'Computing the graphcut...'
-edges = detect_edges(output_img_l) + 1
+edges = detect_edges(output_img_l) + 10
 edges = edges / np.max(edges)
+print np.max(edges), np.min(edges)
 plt.figure(2)
 plt.imshow(edges)
 plt.axis('off')
-plt.savefig('./output/colorized_' + str(datetime.now()) + '.png')
+#plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_edges' + '.png')
 
 #test_labels = graphcut(unary_cost, train.centroids, edges)
 test_labels = graphcut_edge_weight(unary_cost, edges)
@@ -84,4 +86,4 @@ for i in xrange(X):
 plt.figure(1)
 plt.imshow(cv2.cvtColor(np.uint8(output_img), cv.CV_Lab2RGB))
 plt.axis('off')
-plt.savefig('./output/colorized_' + str(datetime.now()) + '.png')
+plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_colorized' + '.png')
