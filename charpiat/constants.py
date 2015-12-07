@@ -12,11 +12,15 @@ Y_points = 40
 train_img_filename = '../Images/Landscape/mountain_color.jpg'
 
 # the file where the test image is stored
+#test_img_filename = '../Images/Landscape/mountain_gray.png'
 test_img_filename = '../Images/Landscape/mountain_gray.png'
 #test_img_filename = '../Images/Elephant/elephant2.jpg'
 
 # the file where the colored test image will be stored
 test_img_colored_filename = './Images/Landscape/mountain_gray_colored_10.png'
+
+# whether to recompute or used saved files
+recomputeData = True
 
 # Number of centroids for clustering the colored image
 num_centroids = 32

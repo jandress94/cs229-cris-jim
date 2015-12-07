@@ -68,30 +68,22 @@ def surfFromImage(image):
 	return np.array(image_surf)
 
 def buildFeatureSpace(image, pca, min_max_scaler):
-	delta_x = image.W/(X_points + 1)
-	delta_y = image.L/(Y_points + 1)
-
+	#delta_x = image.W/(X_points + 1)
+	#delta_y = image.L/(Y_points + 1)
 	features = []
 	# index of the centroid for a sampled pixel (x, y)
 	pixel_labels = []
+	
+	n = (max(surf_window, sampling_side)-1)/2
 
-	for i in xrange(X_points):
-		for j in xrange(Y_points):
-			x = (i+1)*delta_x
-			y = (j+1)*delta_y
-
-			#dct_feature = np.array(dctFromPixel(image.l, x, y))
-			fft_feature = np.array(fftFromPixel(image.l, x, y))
-
-			surf_feature = np.array(surfFromPixel(image.l, image.surfl2, image.surfl3, x, y))
-
-			dev, mean = computeStdDevAndMean(image.l, x, y)
-			extra_features = np.array([dev, mean, image.l[x, y]])
-			feature = np.concatenate((surf_feature, fft_feature, extra_features), axis=1)
-
-			features.append(feature)
-
-			pixel_labels.append(image.clusters[x, y])
+	for x in range(n, image.W - n):
+		print x
+		for y in range(n, image.L - n):
+			#x = (i+1)*delta_x
+			#y = (j+1)*delta_y
+			#dct_feature = np.array(dctFromPixel(image.l, x, y)
+			features.append(get_feature_vector(image.l, image.surfl2, image.surfl3, x, y))
+			pixel_labels.append(image.clusters[x-n, y-n])
 
 	features = np.array(features)
 	pixel_labels = np.array(pixel_labels)
@@ -101,36 +93,27 @@ def buildFeatureSpace(image, pca, min_max_scaler):
 	features = min_max_scaler.fit_transform(features)
 	#features = scale(features.astype(float))
 	reduced_features = pca.fit_transform(features)
-
 	return reduced_features, pixel_labels
 
-def testImageFeatures(image, pca, min_max_scaler, svm_array):
+def get_feature_vector(lum, surfl2, surfl3, x, y):
+	fft_feature = np.array(fftFromPixel(lum, x, y))
+	surf_feature = np.array(surfFromPixel(lum, surfl2, surfl3, x, y))
+	dev, mean = computeStdDevAndMean(lum, x, y)
+	extra_features = np.array([dev, mean, lum[x, y]])
+	return np.concatenate((surf_feature, fft_feature, extra_features), axis=1)
+
+def testImageFeatures(image, pca, min_max_scaler):
 	n = (max(surf_window, sampling_side)-1)/2
 
-	unary_cost = []
+	features = np.zeros(( image.W - 2*n, image.L - 2*n, num_features ))
 
 	for x in range(n, image.W - n):
-		unary_cost_row = []
 		print x
 		for y in range(n, image.L - n):
-			fft_feature = np.array(fftFromPixel(image.l, x, y))
+			feature_vector = get_feature_vector(image.l, image.surfl2, image.surfl3, x, y)
+			#TODO: the following transformations should be done once on the whole data
+			feature_vector = min_max_scaler.transform(feature_vector.astype(np.float))
+			feature_vector = pca.transform(feature_vector)
+			features[x-n, y-n, :] = feature_vector
 
-			surf_feature = np.array(surfFromPixel(image.l, image.surfl2, image.surfl3, x, y))
-
-			dev, mean = computeStdDevAndMean(image.l, x, y)
-			extra_features = np.array([dev, mean, image.l[x, y]])
-			#extra_features = np.reshape(extra_features, (1, 3))
-
-			feature = np.concatenate((surf_feature, fft_feature, extra_features), axis=1)
-			#feature = scale(feature.astype(float))
-			feature = min_max_scaler.transform(feature.astype(np.float))
-			feature = pca.transform(feature)
-
-			margin_array = []
-			for svm in svm_array:
-				margin = -1.0*(svm.decision_function(feature)[0])
-				margin_array.append(margin)
-			unary_cost_row.append(margin_array)
-
-		unary_cost.append(unary_cost_row)
-	return np.array(unary_cost)
+	return features

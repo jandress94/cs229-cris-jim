@@ -72,8 +72,11 @@ def segmentImage(image_lab):
 def colorKmeans(image_ab, k):
 	list_of_pixels = np.reshape(image_ab, [-1, 2])
 	# shape of centroids = (k, 2)
-	centroids, _ = kmeans(list_of_pixels, k)
-	clusters, _ = vq(list_of_pixels, centroids)
+	found_all_colors = False
+	while not found_all_colors:
+		centroids, _ = kmeans(list_of_pixels, k)
+		clusters, _ = vq(list_of_pixels, centroids)
+		found_all_colors = (len(set(clusters)) == k)
 	# clusters looks exactly like image_ab, but instead of [a, b] values it stores the index of the corresponding centroid,
 	# that can be retrieved from centroids
 	clusters = np.reshape(clusters, (image_ab[:, :, 0]).shape)
