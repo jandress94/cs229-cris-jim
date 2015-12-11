@@ -1,8 +1,10 @@
 import cv2
 import cv
 import numpy as np
+from extra_plots import *
 from util import *
 from svm import *
+from edge_weights import *
 from build_features import *
 from constants import *
 from image import *
@@ -16,8 +18,9 @@ import matplotlib.pyplot as plt
 from skimage import io, color
 from datetime import datetime
 
-
 train = Image(train_img_filename)
+#train_model(train)
+
 
 if (recomputeData):
 	# Need to convert train.ab from int to float
@@ -63,17 +66,24 @@ output_img_l = test.l[n:test.W-n, n:test.L-n]
 X, Y = output_img_l.shape
 X, Y = int(X), int(Y)
 
+recomputeData = True
+if (recomputeData):
+	color_vars = get_edge_weights(train, test)
+	np.save('./saved_data/color_vars', color_vars)
+else:
+	color_vars = np.load('./saved_data/color_vars.npy')
+
 print 'Computing the graphcut...'
-edges = detect_edges(output_img_l) + 10
-edges = edges / np.max(edges)
-print np.max(edges), np.min(edges)
+color_vars = detect_edges(output_img_l) + 10
+color_vars = color_vars / np.max(color_vars)
+print np.max(color_vars), np.min(color_vars)
 plt.figure(2)
-plt.imshow(edges)
+plt.imshow(color_vars)
 plt.axis('off')
-#plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_edges' + '.png')
+plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_color_vars.png')
 
 #test_labels = graphcut(unary_cost, train.centroids, edges)
-test_labels = graphcut_edge_weight(unary_cost, edges)
+test_labels = graphcut_edge_weight(unary_cost, color_vars)
 
 output_img = np.zeros([X, Y, 3])
 
@@ -86,4 +96,4 @@ for i in xrange(X):
 plt.figure(1)
 plt.imshow(cv2.cvtColor(np.uint8(output_img), cv.CV_Lab2RGB))
 plt.axis('off')
-plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_colorized' + '.png')
+plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_colorized.png')

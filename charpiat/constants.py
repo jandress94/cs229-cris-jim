@@ -8,11 +8,9 @@ X_points = 40
 Y_points = 40
 
 # the file where the training image is stored
-#train_img_filename = './Images/Landscape/mountain_color.jpg'
 train_img_filename = '../Images/Landscape/mountain_color.jpg'
 
 # the file where the test image is stored
-#test_img_filename = '../Images/Landscape/mountain_gray.png'
 test_img_filename = '../Images/Landscape/mountain_gray.png'
 #test_img_filename = '../Images/Elephant/elephant2.jpg'
 
@@ -42,4 +40,13 @@ sigma1 = 1.0
 sigma2 = 1.5
 
 # Coefficient of first term in energy minimization problem
-alpha = 16
+alpha = 8
+
+# the Sobel blur size
+sobel_blur = 5
+
+# the number of neighbors when determining edge weight
+neigh = 5
+
+# the gaussian standev
+sig = 5.

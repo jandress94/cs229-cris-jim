@@ -24,7 +24,7 @@ def detect_edges(img):
     #return 0.5*np.abs(sobelx) + 0.5*np.abs(sobely)
     #return sobelx, sobely
 
-def graphcut(unary_costs, centroids, edges):
+def graphcut(unary_costs, centroids, color_vars):
         
     #calculate pariwise potiential costs (distance between color classes)
 	binary_costs = np.zeros((num_centroids, num_centroids))
@@ -37,8 +37,8 @@ def graphcut(unary_costs, centroids, edges):
 
 	unary_costs_int32 = (alpha*unary_costs).astype('int32')
 	binary_costs_int32 = binary_costs.astype('int32')
-	edgesY_int32 = edges.astype('int32')
-	edgesX_int32 = edges.astype('int32')
+	edgesY_int32 = color_vars.astype('int32')
+	edgesX_int32 = color_vars.astype('int32')
     #perform graphcut optimization
 	test_labels = pygco.cut_simple_vh(unary_costs_int32, binary_costs_int32, edgesY_int32, edgesX_int32, n_iter=15, algorithm='swap') 
 
@@ -47,11 +47,11 @@ def graphcut(unary_costs, centroids, edges):
 def get_list_index(r, c, cols):
 	return r*cols + c
 
-def get_weight(r1,c1,r2,c2,edges):
+def get_weight(r1,c1,r2,c2,color_vars):
 	#return 1
-	return int(1 / edges[r1, c1] / edges[r2, c2])
+	return int((1. / color_vars[r1, c1] + 1. / color_vars[r2, c2]) / 2.)
 
-def graphcut_edge_weight(unary_costs, edges):
+def graphcut_edge_weight(unary_costs, color_vars):
 	#unary_costs_int32 = (alpha*unary_costs).astype('int32')
 	unary_cost_list = np.zeros((np.shape(unary_costs)[0]*np.shape(unary_costs)[1], np.shape(unary_costs)[2]))
 	rows = np.shape(unary_costs)[0]
@@ -66,12 +66,12 @@ def graphcut_edge_weight(unary_costs, edges):
 			row_safe = r != rows - 1
 			col_safe = c != cols - 1
 			if (row_safe):
-				edges_weights.append([get_list_index(r,c,cols), get_list_index(r+1,c,cols), get_weight(r,c,r+1,c,edges)])
+				edges_weights.append([get_list_index(r,c,cols), get_list_index(r+1,c,cols), get_weight(r,c,r+1,c,color_vars)])
 			if (col_safe):
-				edges_weights.append([get_list_index(r,c,cols), get_list_index(r,c+1,cols), get_weight(r,c,r,c+1,edges)])
+				edges_weights.append([get_list_index(r,c,cols), get_list_index(r,c+1,cols), get_weight(r,c,r,c+1,color_vars)])
 			if (row_safe and col_safe):
-				edges_weights.append([get_list_index(r,c+1,cols), get_list_index(r+1,c,cols), get_weight(r,c+1,r+1,c,edges)])
-				edges_weights.append([get_list_index(r+1,c,cols), get_list_index(r,c+1,cols), get_weight(r+1,c,r,c+1,edges)])
+				edges_weights.append([get_list_index(r,c+1,cols), get_list_index(r+1,c,cols), get_weight(r,c+1,r+1,c,color_vars)])
+				edges_weights.append([get_list_index(r+1,c,cols), get_list_index(r,c+1,cols), get_weight(r+1,c,r,c+1,color_vars)])
 
 	edges_weights_int32 = np.array(edges_weights).astype('int32')
 	binary_costs_int32 = np.zeros((num_centroids, num_centroids)).astype('int32')

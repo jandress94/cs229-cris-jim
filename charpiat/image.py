@@ -6,7 +6,7 @@ import cv
 
 class Image:
 	def __init__(self, filename):
-		self.rgb = cv2.imread(filename) 
+		self.rgb = cv2.imread(filename)
 		self.lab = cv2.cvtColor(self.rgb, cv.CV_BGR2Lab)
 		self.ab = self.lab[:, :, 1:3]
 		# the luminosity for computing surf parameters must be an integer and is offset by 128 compared to self.l
