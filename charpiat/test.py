@@ -66,24 +66,26 @@ output_img_l = test.l[n:test.W-n, n:test.L-n]
 X, Y = output_img_l.shape
 X, Y = int(X), int(Y)
 
-recomputeData = True
+'''
 if (recomputeData):
 	color_vars = get_edge_weights(train, test)
 	np.save('./saved_data/color_vars', color_vars)
 else:
 	color_vars = np.load('./saved_data/color_vars.npy')
+'''
 
 print 'Computing the graphcut...'
+#color_vars = color_vars + 10
 color_vars = detect_edges(output_img_l) + 10
 color_vars = color_vars / np.max(color_vars)
 print np.max(color_vars), np.min(color_vars)
 plt.figure(2)
 plt.imshow(color_vars)
 plt.axis('off')
-plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_color_vars.png')
+#plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_color_vars.png')
 
 #test_labels = graphcut(unary_cost, train.centroids, edges)
-test_labels = graphcut_edge_weight(unary_cost, color_vars)
+test_labels = graphcut_edge_weight(unary_cost, color_vars, train.centroids)
 
 output_img = np.zeros([X, Y, 3])
 

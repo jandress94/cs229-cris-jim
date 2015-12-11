@@ -46,7 +46,7 @@ def gaussian(dist):
 
 def test_model(test, neighbor_model):
 	rows = np.shape(test.features)[0]
-	cols = np.shape(test.features)[1] / 50
+	cols = np.shape(test.features)[1]
 	color_vars = np.zeros((rows, cols))
 	for r in range(rows):
 		print r

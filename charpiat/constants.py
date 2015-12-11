@@ -40,7 +40,7 @@ sigma1 = 1.0
 sigma2 = 1.5
 
 # Coefficient of first term in energy minimization problem
-alpha = 8
+alpha = 2048
 
 # the Sobel blur size
 sobel_blur = 5
@@ -49,4 +49,4 @@ sobel_blur = 5
 neigh = 5
 
 # the gaussian standev
-sig = 5.
+sig = .5
