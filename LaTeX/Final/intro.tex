@@ -1,0 +1,6 @@
+\section{Introduction}
+\label{sec:intro}
+
+Image colorization is the process of adding colors to a grayscale picture using a colored image with similar content as a source. Colorization techniques are widely used is astronomy, MRI scans, and  black-and-white image restoration. However, the colorization problem is challenging since, given a grayscale image, there is no unique correct colorization in the absence of any information from the user. Even though many implementations require the user to specify initial colors in certain regions of the picture, our project focuses on automatic image colorization without any additional input from the user.
+
+In this paper we describe our attempt to solve this challenging problem.  We take as an input a single colored image to train on and a grayscale image of similar content which we will colorize.  The algorithm begins by creating a high dimensional representation of the textures found within the colored image.  After training a collection of SVMs on this input image, we then phrase the color transfer process as an energy minimization problem.  Our approach strives to reconcile the two competing goals of predicting the best color given the local texture and maintaining spatial consistency in our predictions.

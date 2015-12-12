@@ -77,6 +77,7 @@ def colorKmeans(image_ab, k):
 		centroids, _ = kmeans(list_of_pixels, k)
 		clusters, _ = vq(list_of_pixels, centroids)
 		found_all_colors = (len(set(clusters)) == k)
+		print 'found', len(set(clusters)), 'centroids'
 	# clusters looks exactly like image_ab, but instead of [a, b] values it stores the index of the corresponding centroid,
 	# that can be retrieved from centroids
 	clusters = np.reshape(clusters, (image_ab[:, :, 0]).shape)

@@ -1,0 +1,23 @@
+\section{Methods}
+\label{sec:methods}
+
+Our colorization algorithm is as follows.  We begin by discretizing the colors of the training image using k-means clustering.  Rather than running the k-means over the three dimensional $RGB$ coordinates of each pixel, we instead convert the input images to the $L\alpha\beta$ color space, where $L$ represents the luminance of a pixel and $\alpha, \beta$ are the two components of its color.  This space is specifically designed to match a human's perception of color, which means that the centroids produced through clustering will represent a natural division of the colors. For k-means, we typically use 32 colors. By running our algorithm with various values of $k$, we have found that using more than 32 colors does not improve the results. 
+
+Next, we extract a feature vector at every pixel of the training image and use PCA to reduce its dimension as described in Section \ref{sec:dataset}. Then we train a set of SVMs, one per discretized color. We use a one vs. all classification procedure, which means that each SVM predicts whether or not a pixel has its corresponding color. To be less sensitive to outlier pixels, we employ $\ell_1$ regularization:
+\begin{align}
+    \label{eq:SVM}
+    \min_{b, w} \dfrac{1}{2} \|w\|^2 &+ C \sum_{i} \xi_i \\
+    \text{s.t. } y^{(i)}(w^Tx^{(i)}+b) &\geq 1-\xi_i, i = 1, 2, ..., m \\
+    \xi_i &\geq 0, i = 1, 2, ..., m
+\end{align}
+where $C$ is a parameter that we can vary. We tried using two types of kernels, RBF and linear, and chose the latter as it yields comparable results while also being significantly faster.
+
+For testing, we read in the grayscale image, compute the feature vector at every pixel and project it into the subspace determined by PCA in the training step. At this point, it is tempting to simply run the SVMs on each pixel and assign the color of the maximum-margin SVM.  However, this would completely disregard the spatial coherency element of image colorization.  Instead, we make the reasonable assumption that colors are most likely to change where there are edges in the luminance channel of the image.  We therefore use the Sobel operator to approximate the norm of the gradient of the luminance at each pixel. If we treat the image as a graph with edges connecting pixels, then values computed by the Sobel operator indicate how weakly a pixel couples to its neighbors. 
+After computing the SVM margins and Sobel edge weights at each pixel in the training image, we feed all of this information into the energy minimization problem with cost function
+\begin{equation}
+    \label{eq:energy_min}
+    \alpha \sum_p -s_{c(p)} (p) + \sum_{p,q \in \mathcal{N}(p)} \frac{\| c(p) - c(q) \|} {2(w(p)^{-1} + w(q)^{-1})^{-1}}
+\end{equation}
+Here $p$ is a pixel, $\mathcal{N}(\cdot)$ represents a pixel's eight neighbors, $c(\cdot)$ is the color chosen for a particular pixel, $s_{c} (\cdot)$ is the margin when the SVM associated with color $c$ is used to classify a pixel, and $w(\cdot)$ is the Sobel edge weight at a pixel.
+
+Although it seems like finding the color assignment which minimizes Equation $\ref{eq:energy_min}$ would be difficult (in many cases this problem is, in fact, NP-hard), we can use the Boykov-Kolmogorov algorithm to efficiently compute approximate solutions \cite{boykov2001fast, boykov2004experimental}.  This algorithm works by iteratively expanding the set of pixels given a particular color by constructing a graph in which each pixel is connected to its neighbors, a node $n_1$ representing the color being expanded, and a node $n_2$ representing all other colors, each with appropriate weights.  By computing a minimum cut of this graph, we are left with some pixel nodes connected to $n_1$ and some to $n_2$, but none connected to both.  We then expand the labelling so that the nodes connected to $n_1$ are given the color associated with it and the others remain the same.  This procedure is proven to converge to within a known factor of the global optimum, and typically finishes in tens of seconds for images with $600 \times 400$ pixels.

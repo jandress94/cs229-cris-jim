@@ -8,10 +8,12 @@ X_points = 40
 Y_points = 40
 
 # the file where the training image is stored
-train_img_filename = '../Images/Landscape/mountain_color.jpg'
+#train_img_filename = '../Images/Landscape/mountain_color.jpg'
+train_img_filename = '../Images/House/house2.png'
 
 # the file where the test image is stored
-test_img_filename = '../Images/Landscape/mountain_gray.png'
+#test_img_filename = '../Images/Landscape/mountain_gray.png'
+test_img_filename = '../Images/House/house1.png'
 #test_img_filename = '../Images/Elephant/elephant2.jpg'
 
 # the file where the colored test image will be stored
@@ -40,7 +42,7 @@ sigma1 = 1.0
 sigma2 = 1.5
 
 # Coefficient of first term in energy minimization problem
-alpha = 2048
+alpha = 128
 
 # the Sobel blur size
 sobel_blur = 5

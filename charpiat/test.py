@@ -2,6 +2,7 @@ import cv2
 import cv
 import numpy as np
 from extra_plots import *
+from image_metric import *
 from util import *
 from svm import *
 from edge_weights import *
@@ -34,6 +35,8 @@ if (recomputeData):
 	pca = PCA(n_components = num_features, whiten = False)
 	min_max_scaler = preprocessing.MinMaxScaler()
 	train.features, pixel_labels = buildFeatureSpace(train, pca, min_max_scaler)
+	print 'PCA components explained variance ratio:', pca.explained_variance_ratio_
+	print 'PCA total explained variance:', np.sum(pca.explained_variance_ratio_)
 
 	np.save('./saved_data/train_features', train.features)
 	np.save('./saved_data/pixel_labels', pixel_labels)
@@ -78,24 +81,42 @@ print 'Computing the graphcut...'
 #color_vars = color_vars + 10
 color_vars = detect_edges(output_img_l) + 10
 color_vars = color_vars / np.max(color_vars)
-print np.max(color_vars), np.min(color_vars)
 plt.figure(2)
 plt.imshow(color_vars)
 plt.axis('off')
 #plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_color_vars.png')
 
 #test_labels = graphcut(unary_cost, train.centroids, edges)
-test_labels = graphcut_edge_weight(unary_cost, color_vars, train.centroids)
-
-output_img = np.zeros([X, Y, 3])
-
-for i in xrange(X):
-	for j in xrange(Y):
-		output_img[i, j, 1:3] = train.centroids[test_labels[i, j]]
-		output_img[i, j, 0] = output_img_l[i, j]
 
 
-plt.figure(1)
-plt.imshow(cv2.cvtColor(np.uint8(output_img), cv.CV_Lab2RGB))
-plt.axis('off')
-plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_colorized.png')
+data = np.zeros((17, 2))
+for a in range(0, 17):
+	alpha_val = 2 ** (a / 2.0 + 2)
+
+
+
+	test_labels = graphcut_edge_weight(unary_cost, color_vars, train.centroids, alpha_val)
+
+	output_img = np.zeros([X, Y, 3])
+
+	for i in xrange(X):
+		for j in xrange(Y):
+			output_img[i, j, 1:3] = train.centroids[test_labels[i, j]]
+			output_img[i, j, 0] = output_img_l[i, j]
+
+	plt.figure(1)
+	plt.imshow(cv2.cvtColor(np.uint8(output_img), cv.CV_Lab2RGB))
+	plt.axis('off')
+	plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_colorized.png', bbox_inches='tight')
+
+	metric = get_metric_value(output_img, test, train.centroids, save_best_case = False, save_norms = True)
+	print alpha_val, metric
+	data[a, :] = alpha_val, metric
+
+plt.figure(4)
+plt.title(r'Impact of $\alpha$ on Colorization Score')
+plt.xlabel(r'$\alpha$')
+plt.ylabel('Colorization Score')
+plt.xscale('log')
+plt.plot(data[:,0], data[:,1], linewidth = 2.0)
+plt.savefig('./output/' + str(datetime.now()).replace(':', '.') + '_alpha_graph.png', bbox_inches='tight')

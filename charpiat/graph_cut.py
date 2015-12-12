@@ -56,7 +56,7 @@ def get_weight(r1,c1,r2,c2,color_vars):
 	#return 1
 	return int((1. / color_vars[r1, c1] + 1. / color_vars[r2, c2]) / 2.)
 
-def graphcut_edge_weight(unary_costs, color_vars, centroids):
+def graphcut_edge_weight(unary_costs, color_vars, centroids, alpha_val = alpha):
 	#unary_costs_int32 = (alpha*unary_costs).astype('int32')
 	unary_cost_list = np.zeros((np.shape(unary_costs)[0]*np.shape(unary_costs)[1], np.shape(unary_costs)[2]))
 	rows = np.shape(unary_costs)[0]
@@ -80,7 +80,7 @@ def graphcut_edge_weight(unary_costs, color_vars, centroids):
 
 	edges_weights_int32 = np.array(edges_weights).astype('int32')
 	binary_costs_int32 = get_binary_costs(centroids)
-	unary_cost_list_int32 = (alpha*unary_cost_list).astype('int32')
+	unary_cost_list_int32 = (alpha_val*unary_cost_list).astype('int32')
 
 	test_labels_list = pygco.cut_from_graph(edges_weights_int32, unary_cost_list_int32, binary_costs_int32, n_iter=-1, algorithm='swap')
 

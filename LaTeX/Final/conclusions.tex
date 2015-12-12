@@ -1,0 +1,10 @@
+\section{Conclusions}
+\label{sec:conclusions}
+
+In this paper, we have presented and implemented a method for automated image colorization that only requires the user to specify an input training and test image. The proposed algorithm is based on minimizing the cost function in Equation \ref{eq:energy_min}. Our approach takes into account both the best color assignment for individual pixels, as given by the SVM margins, and the color consistency within a neighborhood of each pixel, as indicated by the Sobel edge weight term. Because it solves the colorization problem from a global perspective, our method is more immune to outliers and local prediction errors. We have also shown that it is possible to make accurate predictions about an image's color solely based on the features extracted from its luminance channel. 
+
+As seen by our resulting images, our framework is applicable to a variety of inputs. The algorithm performs well as long as the training and testing images have well defined, rich textures. However, our algorithm does poorly on images with smooth textures, like those of human faces and cloth, in which it often attributes one color to the entire image. 
+
+Our approach can be further extended to accept multiple training images by taking the union of the discretized colors and the union of the feature spaces of those pictures.  It would be interesting to apply state-of-the-art computer vision techniques, like convolutional neural networks, to our colorization problem and see whether the addition would further improve our results.
+
+Our algorithm was implemented in Python 2.7 using the OpenCV \cite{opencv_library}, NumPy \cite{jones_scipy}, scikit-learn \cite{scikit-learn}, and Pygco \cite{mueller_pygco} libraries.  It generally takes around 30 minutes to train and test our algorithm on two $600 \times 400$ pixel images.  Our code is available at https://github.com/jandress94/cs229-cris-jim
